@@ -4,43 +4,29 @@ import { Variables } from "../variables";
 
 const colors = Variables.COLORS;
 
-export const Button = ({ name, onPress, isFocused }) => {
-  if (isFocused) {
-    buttonStyle = styles.focusedButton;
-    textStyle = styles.focusedText;
-  } else {
-    buttonStyle = styles.bluredButton;
-    textStyle = styles.bluredText;
-  }
+export const Button = ({ name, onPress, onFocus }) => {
+  const btnColor = onFocus ? colors.accent : colors.background;
+  const btnTextColor = onFocus ? colors.white : colors.second;
 
   return (
-    <TouchableOpacity activeOpacity={0.8} style={buttonStyle} onPress={onPress}>
-      <Text style={textStyle}>{name}</Text>
+    <TouchableOpacity
+      activeOpacity={0.8}
+      style={{ backgroundColor: btnColor, ...styles.btn }}
+      onPress={onPress}
+    >
+      <Text style={{ color: btnTextColor, ...styles.btnText }}>{name}</Text>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
-  bluredButton: {
-    backgroundColor: colors.background,
+  btn: {
     borderRadius: 100,
     height: 51,
     justifyContent: "center",
   },
-  bluredText: {
+  btnText: {
     textAlign: "center",
     fontSize: 16,
-    color: colors.second,
-  },
-  focusedButton: {
-    backgroundColor: colors.accent,
-    borderRadius: 100,
-    height: 51,
-    justifyContent: "center",
-  },
-  focusedText: {
-    textAlign: "center",
-    fontSize: 16,
-    color: colors.white,
   },
 });

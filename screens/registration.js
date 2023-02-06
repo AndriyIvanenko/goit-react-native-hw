@@ -76,7 +76,7 @@ const Registration = ({ navigation }) => {
             <Button
               name="Register"
               onPress={onRegister}
-              isFocused={isCredantialsReady}
+              onFocus={isCredantialsReady}
             />
           </KeyboardAvoidingView>
 

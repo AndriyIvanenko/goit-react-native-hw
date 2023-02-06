@@ -65,9 +65,9 @@ const Login = ({ navigation }) => {
             />
             <View style={{ height: 43 }}></View>
             <Button
-              name="Register"
+              name="Login"
               onPress={onLogin}
-              isFocused={isCredantialsReady}
+              onFocus={isCredantialsReady}
             />
           </KeyboardAvoidingView>
 

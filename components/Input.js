@@ -1,6 +1,9 @@
 import React from "react";
 import { useState } from "react";
 import { StyleSheet, TextInput } from "react-native";
+import { Variables } from "../variables";
+
+const colors = Variables.COLORS;
 
 export const Input = ({ placeholder, onChangeText, value }) => {
   const [isOnFocus, setIsOnFocus] = useState(false);
@@ -8,14 +11,19 @@ export const Input = ({ placeholder, onChangeText, value }) => {
   const onFocus = () => setIsOnFocus(true);
   const onBlur = () => setIsOnFocus(false);
 
-  const inputStyle = isOnFocus ? styles.focusedInput : styles.bluredInput;
+  const inputBordeColor = isOnFocus ? colors.accent : colors.border;
+  const inputBackgroungColor = isOnFocus ? colors.white : colors.background;
 
   return (
     <TextInput
       placeholder={placeholder}
       onChangeText={onChangeText}
       value={value}
-      style={inputStyle}
+      style={{
+        borderColor: inputBordeColor,
+        backgroundColor: inputBackgroungColor,
+        ...styles.input,
+      }}
       onFocus={onFocus}
       onBlur={onBlur}
     />
@@ -23,19 +31,7 @@ export const Input = ({ placeholder, onChangeText, value }) => {
 };
 
 const styles = StyleSheet.create({
-  bluredInput: {
-    borderColor: "#E8E8E8",
-    backgroundColor: "#F6F6F6",
-    borderWidth: 1,
-    borderRadius: 8,
-    fontSize: 16,
-    lineHeight: 19,
-    padding: 16,
-    // marginBottom: 16,
-  },
-  focusedInput: {
-    borderColor: "#FF6C00",
-    backgroundColor: "#fff",
+  input: {
     borderWidth: 1,
     borderRadius: 8,
     fontSize: 16,
