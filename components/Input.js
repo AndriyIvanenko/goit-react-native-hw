@@ -5,7 +5,7 @@ import { Variables } from "../variables";
 
 const colors = Variables.COLORS;
 
-export const Input = ({ placeholder, onChangeText, value }) => {
+export const Input = ({ placeholder, value, onChangeText, position }) => {
   const [isOnFocus, setIsOnFocus] = useState(false);
 
   const onFocus = () => setIsOnFocus(true);
@@ -22,6 +22,7 @@ export const Input = ({ placeholder, onChangeText, value }) => {
       style={{
         borderColor: inputBordeColor,
         backgroundColor: inputBackgroungColor,
+        ...position,
         ...styles.input,
       }}
       onFocus={onFocus}
@@ -37,6 +38,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
     padding: 16,
-    // marginBottom: 16,
   },
 });

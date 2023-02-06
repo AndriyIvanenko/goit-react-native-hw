@@ -56,14 +56,18 @@ const Login = ({ navigation }) => {
               placeholder="E-mail"
               value={credentials.email}
               onChangeText={getEmail}
+              position={{
+                marginBottom: 16,
+              }}
             />
-            <View style={{ height: 16 }}></View>
             <Input
               placeholder="Password"
               value={credentials.password}
               onChangeText={getPassword}
+              position={{
+                marginBottom: 43,
+              }}
             />
-            <View style={{ height: 43 }}></View>
             <Button
               name="Login"
               onPress={onLogin}

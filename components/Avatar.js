@@ -5,7 +5,7 @@ import { AvatarBtn } from "./AvatarBtn";
 
 const colors = Variables.COLORS;
 
-export const Avatar = () => {
+export const Avatar = ({ position }) => {
   const [profilePhoto, setProfilePhoto] = useState(false);
 
   const handleAvatar = () => {
@@ -19,7 +19,7 @@ export const Avatar = () => {
   const btnType = profilePhoto ? "remove" : "add";
 
   return (
-    <View style={styles.avatar}>
+    <View style={{ ...position, ...styles.avatar }}>
       <AvatarBtn onPress={handleAvatar} type={btnType} />
     </View>
   );
@@ -27,9 +27,6 @@ export const Avatar = () => {
 
 const styles = StyleSheet.create({
   avatar: {
-    position: "absolute",
-    top: -60,
-    alignSelf: "center",
     width: 120,
     height: 120,
     borderRadius: 16,

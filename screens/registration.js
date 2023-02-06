@@ -48,31 +48,43 @@ const Registration = ({ navigation }) => {
         style={styles.background}
       >
         <View style={styles.container}>
-          <Avatar />
+          <Avatar
+            position={{
+              position: "absolute",
+              top: -60,
+              alignSelf: "center",
+            }}
+          />
           <Text style={styles.title}>Registration</Text>
 
           <KeyboardAvoidingView
             behavior={Platform.OS == "ios" ? "padding" : "height"}
-            style={{ marginBottom: 16 }}
+            style={{ marginBottom: 6 }}
           >
             <Input
               placeholder="Login"
               value={credentials.login}
               onChangeText={getLogin}
+              position={{
+                marginBottom: 16,
+              }}
             />
-            <View style={{ height: 16 }}></View>
             <Input
               placeholder="E-mail"
               value={credentials.email}
               onChangeText={getEmail}
+              position={{
+                marginBottom: 16,
+              }}
             />
-            <View style={{ height: 16 }}></View>
             <Input
               placeholder="Password"
               value={credentials.password}
               onChangeText={getPassword}
+              position={{
+                marginBottom: 43,
+              }}
             />
-            <View style={{ height: 43 }}></View>
             <Button
               name="Register"
               onPress={onRegister}

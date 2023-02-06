@@ -6,7 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="fa51cc90-5dd6-4950-b64c-2ae8579a460d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/Button.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Button.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Avatar.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Avatar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/AvatarBtn.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/AvatarBtn.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Input.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Input.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/screens/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/screens/login.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/screens/registration.js" beforeDir="false" afterPath="$PROJECT_DIR$/screens/registration.js" afterDir="false" />
     </list>
@@ -23,15 +25,14 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;com.android.tools.idea.emulator.zoom.toolbar.visible&quot;: &quot;false&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "cidr.known.project.marker": "true"
   }
-}</component>
+}]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
