@@ -30,7 +30,7 @@ const Login = ({ navigation }) => {
   const onLogin = () => {
     if (credentials.email && credentials.password) {
       console.log(credentials);
-      setCredentials((prevState) => ({ ...prevState, ...initCredentials }));
+      setCredentials(initCredentials);
       navigation.navigate("HomePage");
     }
   };

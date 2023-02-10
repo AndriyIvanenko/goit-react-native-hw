@@ -34,7 +34,7 @@ const Registration = ({ navigation }) => {
   const onRegister = () => {
     if (credentials.login && credentials.email && credentials.password) {
       console.log(credentials);
-      setCredentials((prevState) => ({ ...prevState, ...initCredentials }));
+      setCredentials(initCredentials);
       navigation.navigate("HomePage");
     }
   };

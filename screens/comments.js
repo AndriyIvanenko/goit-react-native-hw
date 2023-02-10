@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   KeyboardAvoidingView,
@@ -22,49 +22,37 @@ import { USERS } from "../users";
 const CURRENT_USER = "user-2";
 
 const Comments = ({ navigation, route }) => {
-  const InitNewComment = {
-    createdAt: {
-      date: "",
-      time: "",
-    },
-    userId: CURRENT_USER,
-    comment: "",
-  };
+  const [commentText, setCommentText] = useState("");
 
-  const [newComment, setNewComment] = useState(InitNewComment);
+  const getCommentText = (value) => setCommentText(value);
 
-  // useLayoutEffect(() => {
-  //   publication.comments.push(newComment);
-  //   () => console.log(newComment);
-  // }, [newComment.createdAt]);
-
-  const getNewComment = (value) =>
-    setNewComment((prevState) => ({ ...prevState, comment: value }));
+  function creteNewDate() {
+    const date = new Date();
+    const dateOptions = { day: "numeric", month: "short", year: "numeric" };
+    const timeOptions = { hour: "2-digit", minute: "2-digit" };
+    const createdAt = {
+      date: date.toLocaleDateString("en-GB", dateOptions),
+      time: date.toLocaleTimeString("en-GB", timeOptions),
+    };
+    return createdAt;
+  }
 
   const publication = PUBLICATIONS.find((item) => item.id === route.params.id);
 
   const sendNewPost = () => {
-    if (newComment.post) {
-      const date = new Date();
-      const dateOptions = { day: "numeric", month: "short", year: "numeric" };
-      const timeOptions = { hour: "2-digit", minute: "2-digit" };
-      const createdAt = {
-        date: date.toLocaleDateString("en-GB", dateOptions),
-        time: date.toLocaleTimeString("en-GB", timeOptions),
+    if (commentText) {
+      const date = creteNewDate();
+
+      const newComment = {
+        createdAt: date,
+        userId: CURRENT_USER,
+        comment: commentText,
       };
 
-      setNewComment((prevState) => ({ ...prevState, createdAt }));
-
-      Alert.alert("new comment sent");
+      publication.comments.push(newComment);
       console.log(newComment);
-
-      setNewComment((prevState) => ({ ...prevState, ...InitNewComment }));
-
-      publication.comments.push({
-        createdAt,
-        userId: newComment.userId,
-        comment: newComment.comment,
-      });
+      Alert.alert("new comment sent");
+      setCommentText("");
     }
   };
 
@@ -87,8 +75,8 @@ const Comments = ({ navigation, route }) => {
         >
           <CommentInput
             placeholder="Type a comment..."
-            value={newComment.comment}
-            onChangeText={getNewComment}
+            value={commentText}
+            onChangeText={getCommentText}
           />
           <TouchableOpacity onPress={sendNewPost} style={styles.sendNewPostBtn}>
             <AntDesign name="arrowup" size={30} color={colors.white} />
