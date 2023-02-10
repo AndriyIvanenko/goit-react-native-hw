@@ -5,13 +5,13 @@ import { StyleSheet, TextInput } from "react-native";
 import { Variables } from "../variables";
 const colors = Variables.COLORS;
 
-export const Input = ({ placeholder, value, onChangeText, position }) => {
+export const CommentInput = ({ placeholder, value, onChangeText }) => {
   const [isOnFocus, setIsOnFocus] = useState(false);
 
   const onFocus = () => setIsOnFocus(true);
   const onBlur = () => setIsOnFocus(false);
 
-  const inputBordeColor = isOnFocus ? colors.accent : colors.border;
+  const inputBordeColor = isOnFocus ? colors.text : colors.border;
   const inputBackgroungColor = isOnFocus ? colors.white : colors.background;
 
   return (
@@ -22,11 +22,12 @@ export const Input = ({ placeholder, value, onChangeText, position }) => {
       style={{
         borderColor: inputBordeColor,
         backgroundColor: inputBackgroungColor,
-        ...position,
         ...styles.input,
       }}
       onFocus={onFocus}
       onBlur={onBlur}
+      multiline={true}
+      //   numberOfLines={3}
     />
   );
 };
@@ -39,5 +40,6 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     padding: 16,
     paddingRight: 50,
+    marginTop: 16,
   },
 });

@@ -6,5 +6,7 @@ export const Variables = {
     white: "#FFFFFF",
     background: "#F6F6F6",
     border: "#E8E8E8",
+    text: "#212121",
+    link: "#0000FF",
   },
 };

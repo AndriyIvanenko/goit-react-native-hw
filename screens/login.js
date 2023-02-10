@@ -13,8 +13,8 @@ import {
 } from "react-native";
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
-import { Variables } from "../variables";
 
+import { Variables } from "../variables";
 const colors = Variables.COLORS;
 
 const Login = ({ navigation }) => {
@@ -28,12 +28,11 @@ const Login = ({ navigation }) => {
     setCredentials((prevState) => ({ ...prevState, password: value }));
 
   const onLogin = () => {
-    Alert.alert(
-      "credentials:",
-      `${credentials.login} + ${credentials.email} + ${credentials.password}`
-    );
-    setCredentials(initCredentials);
-    console.log(credentials);
+    if (credentials.email && credentials.password) {
+      console.log(credentials);
+      setCredentials((prevState) => ({ ...prevState, ...initCredentials }));
+      navigation.navigate("HomePage");
+    }
   };
 
   const isCredantialsReady = credentials.email && credentials.password;
@@ -95,7 +94,7 @@ const Login = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     paddingHorizontal: 16,
@@ -108,7 +107,7 @@ const styles = StyleSheet.create({
   },
   title: {
     marginBottom: 33,
-    color: "#000",
+    color: colors.main,
     textAlign: "center",
     fontSize: 30,
     lineHeight: 35,
@@ -119,7 +118,7 @@ const styles = StyleSheet.create({
     marginBottom: 78,
   },
   login: {
-    color: "#00f",
+    color: colors.link,
     textDecorationLine: "underline",
   },
   background: {

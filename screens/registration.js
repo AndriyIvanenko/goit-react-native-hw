@@ -7,13 +7,16 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
-  Alert,
   Pressable,
   ImageBackground,
 } from "react-native";
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
 import { Avatar } from "../components/Avatar";
+
+import { Variables } from "../variables";
+import { color } from "react-native-reanimated";
+const colors = Variables.COLORS;
 
 const Registration = ({ navigation }) => {
   const initCredentials = { login: "", email: "", password: "" };
@@ -29,12 +32,11 @@ const Registration = ({ navigation }) => {
     setCredentials((prevState) => ({ ...prevState, password: value }));
 
   const onRegister = () => {
-    Alert.alert(
-      "credentials:",
-      `${credentials.login} + ${credentials.email} + ${credentials.password}`
-    );
-    setCredentials(initCredentials);
-    console.log(credentials);
+    if (credentials.login && credentials.email && credentials.password) {
+      console.log(credentials);
+      setCredentials((prevState) => ({ ...prevState, ...initCredentials }));
+      navigation.navigate("HomePage");
+    }
   };
 
   const isCredantialsReady =
@@ -49,6 +51,7 @@ const Registration = ({ navigation }) => {
       >
         <View style={styles.container}>
           <Avatar
+            avatarUri=""
             position={{
               position: "absolute",
               top: -60,
@@ -112,7 +115,7 @@ const Registration = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     paddingHorizontal: 16,
@@ -125,7 +128,7 @@ const styles = StyleSheet.create({
   },
   title: {
     marginBottom: 33,
-    color: "#000",
+    color: colors.main,
     textAlign: "center",
     fontSize: 30,
     lineHeight: 35,
@@ -136,7 +139,7 @@ const styles = StyleSheet.create({
     marginBottom: 78,
   },
   login: {
-    color: "#00f",
+    color: colors.link,
     textDecorationLine: "underline",
   },
   background: {
