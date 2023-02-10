@@ -6,7 +6,6 @@ import { Variables } from "../variables";
 const colors = Variables.COLORS;
 
 export const TabBar = ({ state, navigation }) => {
-  //   console.log(state.routes);
   const [selected, setSelected] = useState("Home");
 
   const chahgeColor = (currentTab) =>
