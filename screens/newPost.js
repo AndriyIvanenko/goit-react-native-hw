@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
   Text,
   View,
   Image,
+  TextInput,
   StyleSheet,
   TouchableOpacity,
   KeyboardAvoidingView,
@@ -10,27 +11,43 @@ import {
   TouchableWithoutFeedback,
   Alert,
   Pressable,
+  Dimensions,
 } from "react-native";
-import { Dimensions } from "react-native";
+
+import * as MediaLibrary from "expo-media-library";
+import * as Location from "expo-location";
+import { nanoid } from "nanoid";
+
 import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
-import { TextInput } from "react-native-gesture-handler";
 import { Button } from "../components/Button";
 
 import { Variables } from "../variables";
 const colors = Variables.COLORS;
 
-const windowWidth = Dimensions.get("window").width;
-const imgUri = require("../assets/photo1.jpg");
+import { getPublications, storePublications } from "../db/db";
 
-const AddNewPost = ({ navigation }) => {
+const windowWidth = Dimensions.get("window").width;
+
+const AddNewPost = ({ navigation, route }) => {
   const initialImgData = {
-    imgUri: "file:///C:/Projects/goit-react-native-hw/assets/photo1.jpg",
     description: "",
     location: "",
-    locationUrl: "",
   };
   const [imgData, setImgData] = useState(initialImgData);
+  const [publications, setPublications] = useState([]);
+
+  useLayoutEffect(() => {
+    (async () => {
+      await MediaLibrary.requestPermissionsAsync();
+    })();
+  }, []);
+
+  useEffect(() => {
+    getPublications().then((response) => setPublications(response));
+  }, []);
+
+  let imgUri = route.params && route.params.uri ? route.params.uri : "";
 
   const onDescriptionChange = (value) =>
     setImgData((prevState) => ({ ...prevState, description: value }));
@@ -44,21 +61,62 @@ const AddNewPost = ({ navigation }) => {
   // const onLocationUrlChange = (value) =>
   //   setImgData((prevState) => ({ ...prevState, locationUrl: value }));
 
-  const takePicture = () => Alert.alert("take a picture");
-  const publishPicture = () => Alert.alert("picture published");
+  const takePicture = () => navigation.navigate("Camera");
+  const showLocation = () => navigation.navigate("MapView");
+
+  const cteateNewPost = (coords) => {
+    return {
+      id: nanoid(),
+      imgUri,
+      description: imgData.description,
+      location: {
+        locationName: imgData.location,
+        coords,
+      },
+      comments: [],
+      likes: 0,
+    };
+  };
+
+  const publishPicture = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Permission to access location was denied");
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    const coords = {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    };
+
+    if (publications.length) {
+      const newPost = cteateNewPost(coords);
+      publications.push(newPost);
+      storePublications(publications);
+
+      navigation.navigate("Home");
+    }
+  };
+
   const handleImg = () => Alert.alert("handle picture");
-  const showLocation = () => Alert.alert("show location");
   const removeImg = () => {
-    setImgData((prevState) => ({ ...prevState, ...initialImgData }));
+    setImgData(initialImgData);
+    if (route.params && route.params.uri) {
+      route.params.uri = "";
+    }
     Alert.alert("picture deleted");
   };
 
-  const cameraBtnColor = imgData.imgUri ? colors.white : colors.second;
-  const cameraBtnBgrColor = imgData.imgUri ? "#ffffff4d" : "#ffffffff";
-  const handleImgOperation = imgData.imgUri ? "Edit photo" : "Upload Photo";
+  const cameraBtnColor = imgUri ? colors.white : colors.second;
+  const cameraBtnBgrColor = imgUri ? "#ffffff4d" : "#ffffffff";
+  const handleImgOperation = imgUri ? "Edit photo" : "Upload Photo";
+  const removeBtnColor =
+    imgUri || imgData.description || imgData.location ? colors.white : colors.second;
+  const removeBtnBgrColor =
+    imgUri || imgData.description || imgData.location ? colors.accent : colors.background;
 
-  const isImgDataReady =
-    imgData.imgUri && imgData.description && imgData.location;
+  const isImgDataReady = imgUri && imgData.description && imgData.location;
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -73,9 +131,9 @@ const AddNewPost = ({ navigation }) => {
           >
             <FontAwesome name="camera" size={20} color={cameraBtnColor} />
           </TouchableOpacity>
-          {imgData.imgUri && (
+          {imgUri && (
             <Image
-              source={imgUri}
+              source={{ uri: imgUri }}
               style={{
                 height: 240,
                 width: windowWidth,
@@ -109,23 +167,19 @@ const AddNewPost = ({ navigation }) => {
               style={styles.location}
             />
 
-            <TouchableOpacity
-              onPress={showLocation}
-              style={styles.locationIcon}
-            >
+            <TouchableOpacity onPress={showLocation} style={styles.locationIcon}>
               <Feather name="map-pin" size={18} color={colors.second} />
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
 
-        <Button
-          name="Publish"
-          onFocus={isImgDataReady}
-          onPress={publishPicture}
-        />
+        <Button name="Publish" onFocus={isImgDataReady} onPress={publishPicture} />
 
-        <TouchableOpacity onPress={removeImg} style={styles.removeBtn}>
-          <Feather name="trash-2" size={24} color={colors.second} />
+        <TouchableOpacity
+          onPress={removeImg}
+          style={{ ...styles.removeBtn, backgroundColor: removeBtnBgrColor }}
+        >
+          <Feather name="trash-2" size={24} color={removeBtnColor} />
         </TouchableOpacity>
       </View>
     </TouchableWithoutFeedback>
@@ -191,7 +245,6 @@ const styles = StyleSheet.create({
     height: 40,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.background,
     borderRadius: 20,
     marginTop: 150,
     alignSelf: "center",

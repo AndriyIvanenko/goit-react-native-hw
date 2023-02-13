@@ -1,6 +1,6 @@
 export const Variables = {
   COLORS: {
-    main: "000000",
+    main: "#000000",
     accent: "#FF6C00",
     second: "#BDBDBD",
     white: "#FFFFFF",

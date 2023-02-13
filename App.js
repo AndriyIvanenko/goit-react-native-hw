@@ -9,27 +9,29 @@ import Registration from "./screens/registration";
 import Login from "./screens/login";
 import Comments from "./screens/comments";
 import AddNewPost from "./screens/newPost";
+import CameraScreen from "./screens/camera";
+import MapScreen from "./screens/mapView";
 
 import { HomeTabs } from "./nav/TabNavigation";
 
+import { storePublications } from "./db/db";
+import PUBLICATIONS from "./db/publications.json";
+
 export default () => {
+  storePublications(PUBLICATIONS);
   const Stack = createStackNavigator();
 
   NavigationBar.setButtonStyleAsync("light");
   return (
     <NavigationContainer>
       <StatusBar barStyle="light-content" />
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName="HomePage">
         <Stack.Screen
           name="Registration"
           component={Registration}
           options={{ headerShown: false }}
         />
-        <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{ headerShown: false }}
-        />
+        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         <Stack.Screen
           name={"HomePage"}
           component={HomeTabs}
@@ -43,7 +45,21 @@ export default () => {
         <Stack.Screen
           name="AddNewPost"
           component={AddNewPost}
-          options={{ headerStyle: { height: 60 }, headerTitleAlign: "center" }}
+          options={{
+            title: "New Post",
+            headerStyle: { height: 60 },
+            headerTitleAlign: "center",
+          }}
+        />
+        <Stack.Screen
+          name="Camera"
+          component={CameraScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="MapView"
+          component={MapScreen}
+          options={{ headerShown: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>

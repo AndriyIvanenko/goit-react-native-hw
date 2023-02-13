@@ -1,0 +1,128 @@
+[
+  {
+    "id": "id-1",
+    "imgUri": "https://i.ibb.co/rZcNXyG/photo1.jpg",
+    "description": "Forest in mountains",
+    "location": {
+      "locationName": "Carpathian mountains",
+      "coords": {
+        "latitude": 49.069995,
+        "longitude": 23.415366
+      }
+    },
+    "comments": [
+      {
+        "id": "comment-1",
+        "createdAt": {
+          "date": "09 june, 2021",
+          "time": "18:40"
+        },
+        "userId": "user-1",
+        "comment": "Really love your most recent photo. I’ve been trying to capture the same thing for a few months and would love some tips!"
+      },
+      {
+        "id": "comment-2",
+        "createdAt": {
+          "date": "09 june, 2021",
+          "time": "18:52"
+        },
+        "userId": "user-2",
+        "comment": "A fast 50mm like f1.8 would help with the bokeh. I’ve been using primes as they tend to get a bit sharper images."
+      }
+    ],
+    "likes": 12
+  },
+  {
+    "id": "id-2",
+    "imgUri": "https://i.ibb.co/RC4D04D/photo2.jpg",
+    "description": "Sunset on the sea",
+    "location": {
+      "locationName": "Odesa, Black Sea",
+      "coords": {
+        "latitude": 46.471863,
+        "longitude": 30.759739
+      }
+    },
+    "comments": [
+      {
+        "id": "comment-3",
+        "createdAt": {
+          "date": "11 may, 2020",
+          "time": "15:21"
+        },
+        "userId": "user-1",
+        "comment": "Really love your most recent photo. I’ve been trying to capture the same thing for a few months and would love some tips!"
+      },
+      {
+        "id": "comment-4",
+        "createdAt": {
+          "date": "11 may, 2020",
+          "time": "15:32"
+        },
+        "userId": "user-2",
+        "comment": "A fast 50mm like f1.8 would help with the bokeh. I’ve been using primes as they tend to get a bit sharper images."
+      },
+      {
+        "id": "comment-5",
+        "createdAt": {
+          "date": "11 may, 2020",
+          "time": "15:40"
+        },
+        "userId": "user-1",
+        "comment": "Thank you! That was very helpful!"
+      }
+    ],
+    "likes": 11
+  },
+  {
+    "id": "id-3",
+    "imgUri": "https://i.ibb.co/Qb9j8Py/photo3.jpg",
+    "description": "a village in Italy",
+    "location": {
+      "locationName": "Italy, Tuscany",
+      "coords": {
+        "latitude": 43.451572,
+        "longitude": 10.381936
+      }
+    },
+    "comments": [
+      {
+        "id": "comment-6",
+        "createdAt": {
+          "date": "11 may, 2020",
+          "time": "15:21"
+        },
+        "userId": "user-3",
+        "comment": "Nice work!"
+      },
+      {
+        "id": "comment-7",
+        "createdAt": {
+          "date": "11 may, 2020",
+          "time": "15:32"
+        },
+        "userId": "user-1",
+        "comment": "Really love your most recent photo. I’ve been trying to capture the same thing for a few months and would love some tips!"
+      },
+      {
+        "id": "comment-8",
+        "createdAt": {
+          "date": "11 may, 2020",
+          "time": "15:40"
+        },
+        "userId": "user-2",
+        "comment": "A fast 50mm like f1.8 would help with the bokeh. I’ve been using primes as they tend to get a bit sharper images."
+      },
+      {
+        "id": "comment-9",
+        "createdAt": {
+          "date": "11 may, 2020",
+          "time": "15:40"
+        },
+        "userId": "user-1",
+        "comment": "Thank you! That was very helpful!"
+      }
+    ],
+    "likes": 21
+  }
+]

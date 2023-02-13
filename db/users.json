@@ -1,0 +1,17 @@
+[
+  {
+    "id": "user-1",
+    "name": "Mary Johnson",
+    "avatar": "https://i.ibb.co/bPBBMs7/avatar2.jpg"
+  },
+  {
+    "id": "user-2",
+    "name": "Natali Romanova",
+    "avatar": "https://i.ibb.co/ftynhJR/avatar1.jpg"
+  },
+  {
+    "id": "user-3",
+    "name": "Andriy Ivanenko",
+    "avatar": "https://i.ibb.co/CQTq1XB/avatar3.jpg"
+  }
+]

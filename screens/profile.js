@@ -1,12 +1,6 @@
 import { Feather } from "@expo/vector-icons";
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  ImageBackground,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, Text, View, ImageBackground, TouchableOpacity } from "react-native";
 import { Avatar } from "../components/Avatar";
 import PublicationList from "../components/PublicationList";
 import { Variables } from "../variables";
@@ -46,7 +40,7 @@ const Profile = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     paddingHorizontal: 16,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   KeyboardAvoidingView,
@@ -12,17 +12,24 @@ import {
 import { CommentsList } from "../components/CommentsList";
 import { CommentInput } from "../components/CommentInput";
 import { AntDesign } from "@expo/vector-icons";
+import { nanoid } from "nanoid";
 
 import { Variables } from "../variables";
 const colors = Variables.COLORS;
 
-import { PUBLICATIONS } from "../publications";
-import { USERS } from "../users";
+import USERS from "../db/users.json";
+
+import { getPublications, storePublications } from "../db/db";
 
 const CURRENT_USER = "user-2";
 
 const Comments = ({ navigation, route }) => {
   const [commentText, setCommentText] = useState("");
+  const [publications, setPublications] = useState([]);
+
+  useEffect(() => {
+    getPublications().then((response) => setPublications(response));
+  }, []);
 
   const getCommentText = (value) => setCommentText(value);
 
@@ -37,20 +44,28 @@ const Comments = ({ navigation, route }) => {
     return createdAt;
   }
 
-  const publication = PUBLICATIONS.find((item) => item.id === route.params.id);
+  const publication = route.params.publications.find(
+    (item) => item.id === route.params.id
+  );
 
   const sendNewPost = () => {
     if (commentText) {
       const date = creteNewDate();
 
       const newComment = {
+        id: nanoid(),
         createdAt: date,
         userId: CURRENT_USER,
         comment: commentText,
       };
 
       publication.comments.push(newComment);
-      console.log(newComment);
+      const publicationIndex = route.params.publications.findIndex(
+        (item) => item.id === route.params.id
+      );
+      publications.splice(publicationIndex, 1, publication);
+      storePublications(publications);
+
       Alert.alert("new comment sent");
       setCommentText("");
     }
@@ -60,7 +75,7 @@ const Comments = ({ navigation, route }) => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <View>
-          <Image source={publication.photo} style={styles.image} />
+          <Image source={{ uri: publication.imgUri }} style={styles.image} />
         </View>
 
         <CommentsList
@@ -96,7 +111,7 @@ const styles = StyleSheet.create({
   },
 
   image: {
-    width: "100%",
+    height: 240,
     borderRadius: 8,
     marginBottom: 18,
   },

@@ -3,14 +3,12 @@ import { View, StyleSheet, Image, Text } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import PublicationList from "../components/PublicationList";
 
-import {
-  HeaderButtons,
-  HeaderButton,
-  Item,
-} from "react-navigation-header-buttons";
+import { HeaderButtons, HeaderButton, Item } from "react-navigation-header-buttons";
 
 import { Variables } from "../variables";
 const colors = Variables.COLORS;
+
+const context = "home";
 
 const FeatherHeaderButton = (props) => (
   <HeaderButton IconComponent={Feather} iconSize={23} {...props} />
@@ -20,7 +18,7 @@ const userName = "Natali Romanova";
 const userEmail = "email@example.com";
 const avatar = require("../assets/avatar1.jpg");
 
-const Home = ({ navigation }) => {
+const Home = ({ navigation, route }) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -45,7 +43,7 @@ const Home = ({ navigation }) => {
           <Text style={{ fontSize: 11 }}>{userEmail}</Text>
         </View>
       </View>
-      <PublicationList navigation={navigation} />
+      <PublicationList navigation={navigation} context={context} />
     </View>
   );
 };

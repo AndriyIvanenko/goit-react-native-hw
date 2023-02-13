@@ -6,9 +6,7 @@ const colors = Variables.COLORS;
 
 export const CommentsList = ({ comments, users, currentUser }) => {
   const commentDirection = (user) =>
-    user !== currentUser
-      ? { flexDirection: "row" }
-      : { flexDirection: "row-reverse" };
+    user !== currentUser ? { flexDirection: "row" } : { flexDirection: "row-reverse" };
   const commentOffset = (user) =>
     user !== currentUser ? { marginLeft: 16 } : { marginRight: 16 };
   const datePosition = (user) =>
@@ -20,7 +18,7 @@ export const CommentsList = ({ comments, users, currentUser }) => {
       renderItem={({ item }) => (
         <View style={{ display: "flex", ...commentDirection(item.userId) }}>
           <Image
-            source={users.find((user) => user.id === item.userId).avatar}
+            source={{ uri: users.find((user) => user.id === item.userId).avatar }}
             style={styles.avatar}
           />
           <View style={{ ...styles.comment, ...commentOffset(item.userId) }}>
@@ -33,7 +31,8 @@ export const CommentsList = ({ comments, users, currentUser }) => {
           </View>
         </View>
       )}
-    ></FlatList>
+      keyExtractor={(item) => item.id}
+    />
   );
 };
 
