@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Text,
   View,
@@ -14,7 +14,6 @@ import {
   Dimensions,
 } from "react-native";
 
-import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
 import { nanoid } from "nanoid";
 
@@ -37,17 +36,11 @@ const AddNewPost = ({ navigation, route }) => {
   const [imgData, setImgData] = useState(initialImgData);
   const [publications, setPublications] = useState([]);
 
-  useLayoutEffect(() => {
-    (async () => {
-      await MediaLibrary.requestPermissionsAsync();
-    })();
-  }, []);
-
   useEffect(() => {
     getPublications().then((response) => setPublications(response));
   }, []);
 
-  let imgUri = route.params && route.params.uri ? route.params.uri : "";
+  const imgUri = route.params && route.params.uri ? route.params.uri : "";
 
   const onDescriptionChange = (value) =>
     setImgData((prevState) => ({ ...prevState, description: value }));
@@ -55,14 +48,7 @@ const AddNewPost = ({ navigation, route }) => {
   const onLocationChange = (value) =>
     setImgData((prevState) => ({ ...prevState, location: value }));
 
-  // const onImageChange = (value) =>
-  //   setImgData((prevState) => ({ ...prevState, imgUri: value }));
-
-  // const onLocationUrlChange = (value) =>
-  //   setImgData((prevState) => ({ ...prevState, locationUrl: value }));
-
   const takePicture = () => navigation.navigate("Camera");
-  const showLocation = () => navigation.navigate("MapView");
 
   const cteateNewPost = (coords) => {
     return {
@@ -79,24 +65,22 @@ const AddNewPost = ({ navigation, route }) => {
   };
 
   const publishPicture = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
+    const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
       Alert.alert("Permission to access location was denied");
     }
 
-    let location = await Location.getCurrentPositionAsync({});
+    const location = await Location.getCurrentPositionAsync({});
     const coords = {
       latitude: location.coords.latitude,
       longitude: location.coords.longitude,
     };
 
-    if (publications.length) {
-      const newPost = cteateNewPost(coords);
-      publications.push(newPost);
-      storePublications(publications);
+    const newPost = cteateNewPost(coords);
+    publications.push(newPost);
+    storePublications(publications);
 
-      navigation.navigate("Home");
-    }
+    navigation.navigate("Home");
   };
 
   const handleImg = () => Alert.alert("handle picture");
@@ -167,9 +151,9 @@ const AddNewPost = ({ navigation, route }) => {
               style={styles.location}
             />
 
-            <TouchableOpacity onPress={showLocation} style={styles.locationIcon}>
+            <View style={styles.locationIcon}>
               <Feather name="map-pin" size={18} color={colors.second} />
-            </TouchableOpacity>
+            </View>
           </View>
         </KeyboardAvoidingView>
 
