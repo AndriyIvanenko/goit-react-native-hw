@@ -10,17 +10,22 @@ import {
   Pressable,
   ImageBackground,
 } from "react-native";
+
+import { useDispatch } from "react-redux";
+import { signUp } from "../redux/authMethods";
+
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
 import { Avatar } from "../components/Avatar";
 
 import { Variables } from "../variables";
-import { color } from "react-native-reanimated";
 const colors = Variables.COLORS;
 
 const Registration = ({ navigation }) => {
   const initCredentials = { login: "", email: "", password: "" };
   const [credentials, setCredentials] = useState(initCredentials);
+
+  const dispatch = useDispatch();
 
   const getLogin = (value) =>
     setCredentials((prevState) => ({ ...prevState, login: value }));
@@ -33,7 +38,7 @@ const Registration = ({ navigation }) => {
 
   const onRegister = () => {
     if (credentials.login && credentials.email && credentials.password) {
-      console.log(credentials);
+      dispatch(signUp(credentials.email, credentials.password));
       setCredentials(initCredentials);
       navigation.navigate("HomePage");
     }
@@ -88,11 +93,7 @@ const Registration = ({ navigation }) => {
                 marginBottom: 43,
               }}
             />
-            <Button
-              name="Register"
-              onPress={onRegister}
-              onFocus={isCredantialsReady}
-            />
+            <Button name="Register" onPress={onRegister} onFocus={isCredantialsReady} />
           </KeyboardAvoidingView>
 
           <View
