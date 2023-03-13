@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -14,14 +14,25 @@ import MapScreen from "../screens/mapView";
 
 import { HomeTabs } from "./TabNavigation";
 
+import { useDispatch, useSelector } from "react-redux";
+import { isUserLoggedIn } from "../redux/auth/authSelectors";
+import { getAuthState } from "../redux/auth/authOperations";
+
 export const NavContainer = () => {
   const Stack = createStackNavigator();
   NavigationBar.setButtonStyleAsync("light");
 
+  const isLoggedIn = useSelector(isUserLoggedIn);
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getAuthState());
+  }, []);
+
   return (
     <NavigationContainer>
       <StatusBar barStyle="light-content" />
-      <Stack.Navigator initialRouteName="HomePage">
+      <Stack.Navigator initialRouteName={isLoggedIn ? "HomePage" : "Login"}>
         <Stack.Screen
           name="Registration"
           component={Registration}

@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import { getUserId } from "../redux/auth/authSelectors";
+
 import {
   Text,
   View,
@@ -15,7 +18,8 @@ import {
 } from "react-native";
 
 import * as Location from "expo-location";
-import { nanoid } from "nanoid";
+import { uploadImg } from "../helpers/helpers";
+import { createNewPost } from "../helpers/helpers";
 
 import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
@@ -23,8 +27,7 @@ import { Button } from "../components/Button";
 
 import { Variables } from "../variables";
 const colors = Variables.COLORS;
-
-import { getPublications, storePublications } from "../db/db";
+const context = "newPost";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -34,11 +37,6 @@ const AddNewPost = ({ navigation, route }) => {
     location: "",
   };
   const [imgData, setImgData] = useState(initialImgData);
-  const [publications, setPublications] = useState([]);
-
-  useEffect(() => {
-    getPublications().then((response) => setPublications(response));
-  }, []);
 
   const imgUri = route.params && route.params.uri ? route.params.uri : "";
 
@@ -48,42 +46,34 @@ const AddNewPost = ({ navigation, route }) => {
   const onLocationChange = (value) =>
     setImgData((prevState) => ({ ...prevState, location: value }));
 
-  const takePicture = () => navigation.navigate("Camera");
+  const takePicture = () => navigation.navigate("Camera", { context });
 
-  const cteateNewPost = (coords) => {
-    return {
-      id: nanoid(),
-      imgUri,
-      description: imgData.description,
-      location: {
-        locationName: imgData.location,
-        coords,
-      },
-      comments: [],
-      likes: 0,
-    };
-  };
+  const currentUser = useSelector(getUserId);
 
-  const publishPicture = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert("Permission to access location was denied");
+  const publishNewPost = async () => {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission to access location was denied");
+      }
+
+      const imgPath = await uploadImg(imgUri);
+
+      const location = await Location.getCurrentPositionAsync({});
+      const coords = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      };
+
+      await createNewPost(imgPath, imgData, coords, currentUser);
+    } catch (error) {
+      console.log(error.message);
     }
-
-    const location = await Location.getCurrentPositionAsync({});
-    const coords = {
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-    };
-
-    const newPost = cteateNewPost(coords);
-    publications.push(newPost);
-    storePublications(publications);
-
     navigation.navigate("Home");
   };
 
-  const handleImg = () => Alert.alert("handle picture");
+  const handleImg = () => Alert.alert("handle image");
+
   const removeImg = () => {
     setImgData(initialImgData);
     if (route.params && route.params.uri) {
@@ -157,7 +147,7 @@ const AddNewPost = ({ navigation, route }) => {
           </View>
         </KeyboardAvoidingView>
 
-        <Button name="Publish" onFocus={isImgDataReady} onPress={publishPicture} />
+        <Button name="Publish" onFocus={isImgDataReady} onPress={publishNewPost} />
 
         <TouchableOpacity
           onPress={removeImg}

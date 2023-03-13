@@ -1,4 +1,8 @@
 import React, { useLayoutEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { signOut } from "../redux/auth/authOperations";
+import { getUser } from "../redux/auth/authSelectors";
+
 import { View, StyleSheet, Image, Text } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import PublicationList from "../components/PublicationList";
@@ -14,11 +18,15 @@ const FeatherHeaderButton = (props) => (
   <HeaderButton IconComponent={Feather} iconSize={23} {...props} />
 );
 
-const userName = "Natali Romanova";
-const userEmail = "email@example.com";
-const avatar = require("../assets/avatar1.jpg");
-
 const Home = ({ navigation, route }) => {
+  const currentUser = useSelector(getUser);
+
+  const dispatch = useDispatch();
+  const onLogOutClick = () => {
+    dispatch(signOut());
+    navigation.navigate("Login");
+  };
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -27,7 +35,7 @@ const Home = ({ navigation, route }) => {
             title="log-out"
             iconName="log-out"
             color={colors.second}
-            onPress={() => navigation.navigate("Login")}
+            onPress={onLogOutClick}
           />
         </HeaderButtons>
       ),
@@ -37,10 +45,12 @@ const Home = ({ navigation, route }) => {
   return (
     <View style={styles.container}>
       <View style={styles.userInfo}>
-        <Image source={avatar} style={styles.avatar} />
+        {currentUser.avatarURL && (
+          <Image source={{ uri: currentUser.avatarURL }} style={styles.avatar} />
+        )}
         <View>
-          <Text style={{ fontSize: 13, fontWeight: "700" }}>{userName}</Text>
-          <Text style={{ fontSize: 11 }}>{userEmail}</Text>
+          <Text style={{ fontSize: 13, fontWeight: "700" }}>{currentUser.userName}</Text>
+          <Text style={{ fontSize: 11 }}>{currentUser.userEmail}</Text>
         </View>
       </View>
       <PublicationList navigation={navigation} context={context} />

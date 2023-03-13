@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -11,8 +11,9 @@ import {
   ImageBackground,
 } from "react-native";
 
-import { useDispatch } from "react-redux";
-import { signUp } from "../redux/authMethods";
+import { useDispatch, useSelector } from "react-redux";
+import { signUp } from "../redux/auth/authOperations";
+import { isUserLoggedIn } from "../redux/auth/authSelectors";
 
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
@@ -20,15 +21,21 @@ import { Avatar } from "../components/Avatar";
 
 import { Variables } from "../variables";
 const colors = Variables.COLORS;
+const context = "Registration";
 
-const Registration = ({ navigation }) => {
-  const initCredentials = { login: "", email: "", password: "" };
+const Registration = ({ navigation, route }) => {
+  const initCredentials = { email: "", password: "", name: "", avatarURL: "" };
   const [credentials, setCredentials] = useState(initCredentials);
 
-  const dispatch = useDispatch();
+  const isLoggedIn = useSelector(isUserLoggedIn);
+  useEffect(() => {
+    if (isLoggedIn) navigation.navigate("HomePage");
+  }, [isLoggedIn]);
+
+  const avatarUri = route.params && route.params.uri ? route.params.uri : "";
 
   const getLogin = (value) =>
-    setCredentials((prevState) => ({ ...prevState, login: value }));
+    setCredentials((prevState) => ({ ...prevState, name: value }));
 
   const getEmail = (value) =>
     setCredentials((prevState) => ({ ...prevState, email: value }));
@@ -36,16 +43,24 @@ const Registration = ({ navigation }) => {
   const getPassword = (value) =>
     setCredentials((prevState) => ({ ...prevState, password: value }));
 
-  const onRegister = () => {
-    if (credentials.login && credentials.email && credentials.password) {
-      dispatch(signUp(credentials.email, credentials.password));
+  const onAvatarBtnPress = () => {
+    if (credentials.avatarURL) {
+      setCredentials((prevState) => ({ ...prevState, avatarURL: "" }));
+    } else {
+      navigation.navigate("Camera", { context });
+    }
+  };
+
+  const dispatch = useDispatch();
+  const onRegisterClick = () => {
+    if (credentials.name && credentials.email && credentials.password) {
+      dispatch(signUp(credentials, avatarUri));
       setCredentials(initCredentials);
-      navigation.navigate("HomePage");
     }
   };
 
   const isCredantialsReady =
-    credentials.login && credentials.email && credentials.password;
+    credentials.name && credentials.email && credentials.password;
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -56,12 +71,13 @@ const Registration = ({ navigation }) => {
       >
         <View style={styles.container}>
           <Avatar
-            avatarUri=""
+            avatarUri={avatarUri}
             position={{
               position: "absolute",
               top: -60,
               alignSelf: "center",
             }}
+            onBtnPress={onAvatarBtnPress}
           />
           <Text style={styles.title}>Registration</Text>
 
@@ -71,7 +87,7 @@ const Registration = ({ navigation }) => {
           >
             <Input
               placeholder="Login"
-              value={credentials.login}
+              value={credentials.name}
               onChangeText={getLogin}
               position={{
                 marginBottom: 16,
@@ -93,7 +109,11 @@ const Registration = ({ navigation }) => {
                 marginBottom: 43,
               }}
             />
-            <Button name="Register" onPress={onRegister} onFocus={isCredantialsReady} />
+            <Button
+              name="Register"
+              onPress={onRegisterClick}
+              onFocus={isCredantialsReady}
+            />
           </KeyboardAvoidingView>
 
           <View

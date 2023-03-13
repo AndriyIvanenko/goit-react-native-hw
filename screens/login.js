@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,19 +7,29 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
-  Alert,
   ImageBackground,
   Pressable,
 } from "react-native";
+
+import { useDispatch, useSelector } from "react-redux";
+import { signIn } from "../redux/auth/authOperations";
+import { isUserLoggedIn } from "../redux/auth/authSelectors";
+
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
 
 import { Variables } from "../variables";
+
 const colors = Variables.COLORS;
 
 const Login = ({ navigation }) => {
   const initCredentials = { email: "", password: "" };
   const [credentials, setCredentials] = useState(initCredentials);
+
+  const isLoggedIn = useSelector(isUserLoggedIn);
+  useEffect(() => {
+    if (isLoggedIn) navigation.navigate("HomePage");
+  }, [isLoggedIn]);
 
   const getEmail = (value) =>
     setCredentials((prevState) => ({ ...prevState, email: value }));
@@ -27,11 +37,11 @@ const Login = ({ navigation }) => {
   const getPassword = (value) =>
     setCredentials((prevState) => ({ ...prevState, password: value }));
 
-  const onLogin = () => {
+  const dispatch = useDispatch();
+  const onLoginClick = async () => {
     if (credentials.email && credentials.password) {
-      console.log(credentials);
+      dispatch(signIn(credentials));
       setCredentials(initCredentials);
-      navigation.navigate("HomePage");
     }
   };
 
@@ -67,11 +77,7 @@ const Login = ({ navigation }) => {
                 marginBottom: 43,
               }}
             />
-            <Button
-              name="Login"
-              onPress={onLogin}
-              onFocus={isCredantialsReady}
-            />
+            <Button name="Login" onPress={onLoginClick} onFocus={isCredantialsReady} />
           </KeyboardAvoidingView>
 
           <View
