@@ -46,12 +46,12 @@ export const createNewDate = () => {
   return createdAt;
 };
 
-export const manualyUpdateUser = async () => {
+export const manualyUpdateUser = async (name, avatar, email) => {
   await auth.currentUser.updateProfile({
-    displayName: "Nataly Romanova",
-    photoURL: "https://i.ibb.co/ftynhJR/avatar1.jpg",
+    displayName: name,
+    photoURL: avatar,
   });
-  await auth.currentUser.updateEmail("test@email.com");
+  await auth.currentUser.updateEmail(email);
 };
 
 export const manualyCreatePost = async () => {
