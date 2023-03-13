@@ -17,57 +17,62 @@ import { nanoid } from "nanoid";
 import { Variables } from "../variables";
 const colors = Variables.COLORS;
 
-import USERS from "../db/users.json";
-
-import { getPublications, storePublications } from "../db/db";
-
-const CURRENT_USER = "user-2";
+import { firestore } from "../firebase/config";
+import { useSelector } from "react-redux";
+import { getUser } from "../redux/auth/authSelectors";
+import { createNewDate } from "../helpers/helpers";
 
 const Comments = ({ navigation, route }) => {
-  const [commentText, setCommentText] = useState("");
-  const [publications, setPublications] = useState([]);
+  const [newComment, setNewComment] = useState("");
+  const [post, setPost] = useState([]);
+
+  const currentUser = useSelector(getUser);
+
+  const postId = route.params.id;
+
+  const getPost = async () => {
+    try {
+      const snapshot = await firestore.collection("posts").doc(postId).get();
+      const post = snapshot.data();
+      setPost(post);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   useEffect(() => {
-    getPublications().then((response) => setPublications(response));
+    getPost();
   }, []);
 
-  const getCommentText = (value) => setCommentText(value);
+  const getNewComment = (value) => setNewComment(value);
 
-  function creteNewDate() {
-    const date = new Date();
-    const dateOptions = { day: "numeric", month: "short", year: "numeric" };
-    const timeOptions = { hour: "2-digit", minute: "2-digit" };
-    const createdAt = {
-      date: date.toLocaleDateString("en-GB", dateOptions),
-      time: date.toLocaleTimeString("en-GB", timeOptions),
-    };
-    return createdAt;
-  }
+  const sendNewComment = async () => {
+    if (newComment) {
+      const date = createNewDate();
 
-  const publication = route.params.publications.find(
-    (item) => item.id === route.params.id
-  );
-
-  const sendNewPost = () => {
-    if (commentText) {
-      const date = creteNewDate();
-
-      const newComment = {
+      const comment = {
         id: nanoid(),
         createdAt: date,
-        userId: CURRENT_USER,
-        comment: commentText,
+        userId: currentUser.userId,
+        userAvatar: currentUser.avatarURL,
+        comment: newComment,
       };
 
-      publication.comments.push(newComment);
-      const publicationIndex = route.params.publications.findIndex(
-        (item) => item.id === route.params.id
-      );
-      publications.splice(publicationIndex, 1, publication);
-      storePublications(publications);
+      const updatedComments = [...post.comments, comment];
+      setPost((prevState) => ({ ...prevState, comments: updatedComments }));
+
+      try {
+        const ref = await firestore.collection("posts").doc(postId);
+        console.log(updatedComments);
+        ref.update({
+          comments: updatedComments,
+        });
+      } catch (error) {
+        console.log(error.message);
+      }
 
       Alert.alert("new comment sent");
-      setCommentText("");
+      setNewComment("");
     }
   };
 
@@ -75,14 +80,10 @@ const Comments = ({ navigation, route }) => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <View>
-          <Image source={{ uri: publication.imgUri }} style={styles.image} />
+          <Image source={{ uri: post.imgUri }} style={styles.image} />
         </View>
 
-        <CommentsList
-          comments={publication.comments}
-          users={USERS}
-          currentUser={CURRENT_USER}
-        />
+        <CommentsList comments={post.comments} />
 
         <KeyboardAvoidingView
           behavior={Platform.OS == "ios" ? "padding" : "height"}
@@ -90,10 +91,10 @@ const Comments = ({ navigation, route }) => {
         >
           <CommentInput
             placeholder="Type a comment..."
-            value={commentText}
-            onChangeText={getCommentText}
+            value={newComment}
+            onChangeText={getNewComment}
           />
-          <TouchableOpacity onPress={sendNewPost} style={styles.sendNewPostBtn}>
+          <TouchableOpacity onPress={sendNewComment} style={styles.sendNewPostBtn}>
             <AntDesign name="arrowup" size={30} color={colors.white} />
           </TouchableOpacity>
         </KeyboardAvoidingView>

@@ -5,20 +5,47 @@ import { Feather } from "@expo/vector-icons";
 import { Variables } from "../variables";
 const colors = Variables.COLORS;
 
-import { getPublications } from "../db/db";
+import { firestore } from "../firebase/config";
+import { useSelector } from "react-redux";
+import { getUser } from "../redux/auth/authSelectors";
 
 const PublicationList = ({ navigation, context }) => {
-  const [publications, setPublications] = useState([]);
+  const [posts, setPosts] = useState([]);
+
+  const currentUser = useSelector(getUser);
+
+  const getPosts = async () => {
+    const updatedPosts = [];
+    try {
+      if (context === "profile") {
+        const data = await firestore
+          .collection("posts")
+          .where("owner", "==", currentUser.userId)
+          .get();
+        data.docs.map((doc) => {
+          updatedPosts.push({ id: doc.id, ...doc.data() });
+        });
+      } else {
+        const data = await firestore.collection("posts").get();
+        data.docs.map((doc) => {
+          updatedPosts.push({ id: doc.id, ...doc.data() });
+        });
+      }
+      setPosts(updatedPosts);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   useEffect(() => {
-    getPublications().then((response) => setPublications(response));
+    getPosts();
   });
 
   const addInfoTextColor = context === "profile" ? colors.main : colors.second;
   const iconColor = context === "profile" ? colors.accent : colors.second;
 
   const onCommentPress = (id) => {
-    navigation.navigate("Comments", { id, publications });
+    navigation.navigate("Comments", { id });
   };
 
   const openMapView = (coords, name, description) =>
@@ -27,7 +54,7 @@ const PublicationList = ({ navigation, context }) => {
   return (
     <FlatList
       style={{ height: "65%" }}
-      data={publications}
+      data={posts}
       renderItem={({ item }) => (
         <View style={{ marginBottom: 32 }}>
           <Image source={{ uri: item.imgUri }} style={styles.image} />
@@ -47,7 +74,7 @@ const PublicationList = ({ navigation, context }) => {
               <Text
                 style={{
                   fontSize: 16,
-                  color: addInfoTextColor,
+                  // color: addInfoTextColor,
                   marginLeft: 8,
                   marginRight: 27,
                 }}
@@ -72,7 +99,7 @@ const PublicationList = ({ navigation, context }) => {
             )}
 
             <View style={styles.location}>
-              <Feather name="map-pin" size={18} color={colors.second} />
+              <Feather name="map-pin" size={18} color={iconColor} />
               <TouchableOpacity
                 onPress={() =>
                   openMapView(

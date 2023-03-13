@@ -1,14 +1,13 @@
-import React, { useState } from "react";
-import { TouchableOpacity, StyleSheet, Alert, View, Image } from "react-native";
+import React from "react";
+import { TouchableOpacity, StyleSheet, View, Image } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { Variables } from "../variables";
-import { TouchableHighlight } from "react-native-gesture-handler";
 
+import { Variables } from "../variables";
 const colors = Variables.COLORS;
 
-export const Avatar = ({ avatarUri = "", position }) => {
+export const Avatar = ({ position, onBtnPress, avatarUri }) => {
   const handleAvatar = () => {
-    Alert.alert("handle avatar");
+    onBtnPress();
   };
 
   const btnRotation = avatarUri ? "46deg" : "0deg";
@@ -16,7 +15,8 @@ export const Avatar = ({ avatarUri = "", position }) => {
 
   return (
     <View style={{ ...position, ...styles.avatar }}>
-      <Image source={avatarUri} style={styles.image} />
+      {avatarUri && <Image source={{ uri: avatarUri }} style={styles.image} />}
+
       <TouchableOpacity
         style={{ ...styles.btn, transform: [{ rotateZ: btnRotation }] }}
         onPress={handleAvatar}
@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 120,
+    height: 120,
     borderRadius: 16,
   },
 });

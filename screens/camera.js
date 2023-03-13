@@ -19,7 +19,7 @@ import * as ScreenOrientation from "expo-screen-orientation";
 import { Variables } from "../variables";
 const colors = Variables.COLORS;
 
-const CameraScreen = ({ navigation }) => {
+const CameraScreen = ({ navigation, route }) => {
   const initCameraDimesions = {
     width: Math.round(Dimensions.get("window").width),
     height: Math.round((Dimensions.get("window").width / 9) * 16),
@@ -95,10 +95,15 @@ const CameraScreen = ({ navigation }) => {
     );
   };
 
-  const goToNewPost = async () => {
+  const goBack = async () => {
     await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
     ScreenOrientation.removeOrientationChangeListeners();
-    navigation.navigate("AddNewPost", { uri: picture.uri, id: picture.id });
+    const { context } = route.params;
+    if (context === "newPost") {
+      navigation.navigate("AddNewPost", { uri: picture.uri, id: picture.id });
+    } else {
+      navigation.navigate("Registration", { uri: picture.uri, id: picture.id });
+    }
   };
 
   if (hasCameraPermission === false) {
@@ -129,7 +134,7 @@ const CameraScreen = ({ navigation }) => {
           <MaterialIcons name="flip-camera-android" size={24} color={colors.main} />
         </TouchableOpacity>
 
-        <Pressable style={styles.imgContainer} onPress={goToNewPost}>
+        <Pressable style={styles.imgContainer} onPress={goBack}>
           {picture && (
             <Image source={{ uri: picture.uri }} style={{ width: 120, height: 80 }} />
           )}
