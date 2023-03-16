@@ -33,6 +33,9 @@ const Registration = ({ navigation, route }) => {
   }, [isLoggedIn]);
 
   const avatarUri = route.params && route.params.uri ? route.params.uri : "";
+  useEffect(() => {
+    setCredentials((prevState) => ({ ...prevState, avatarURL: avatarUri }));
+  }, [avatarUri]);
 
   const getLogin = (value) =>
     setCredentials((prevState) => ({ ...prevState, name: value }));
@@ -54,7 +57,7 @@ const Registration = ({ navigation, route }) => {
   const dispatch = useDispatch();
   const onRegisterClick = () => {
     if (credentials.name && credentials.email && credentials.password) {
-      dispatch(signUp(credentials, avatarUri));
+      dispatch(signUp(credentials));
       setCredentials(initCredentials);
     }
   };
@@ -71,7 +74,7 @@ const Registration = ({ navigation, route }) => {
       >
         <View style={styles.container}>
           <Avatar
-            avatarUri={avatarUri}
+            avatarUri={credentials.avatarURL}
             position={{
               position: "absolute",
               top: -60,

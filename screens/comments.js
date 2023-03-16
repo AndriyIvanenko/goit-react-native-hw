@@ -20,7 +20,7 @@ const colors = Variables.COLORS;
 import { firestore } from "../firebase/config";
 import { useSelector } from "react-redux";
 import { getUser } from "../redux/auth/authSelectors";
-import { createNewDate } from "../helpers/helpers";
+import { createNewDate } from "../firebase/operations";
 
 const Comments = ({ navigation, route }) => {
   const [newComment, setNewComment] = useState("");

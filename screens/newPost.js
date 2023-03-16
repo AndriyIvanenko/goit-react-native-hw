@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getUserId } from "../redux/auth/authSelectors";
+import { updateFlag } from "../redux/upd/updSlise";
+import { addPublication } from "../redux/publications/publicationsSlice";
 
 import {
   Text,
@@ -18,8 +20,8 @@ import {
 } from "react-native";
 
 import * as Location from "expo-location";
-import { uploadImg } from "../helpers/helpers";
-import { createNewPost } from "../helpers/helpers";
+import { uploadImg } from "../firebase/operations";
+import { createNewPost } from "../firebase/operations";
 
 import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
@@ -37,6 +39,8 @@ const AddNewPost = ({ navigation, route }) => {
     location: "",
   };
   const [imgData, setImgData] = useState(initialImgData);
+
+  const dispatch = useDispatch();
 
   const imgUri = route.params && route.params.uri ? route.params.uri : "";
 
@@ -58,14 +62,16 @@ const AddNewPost = ({ navigation, route }) => {
       }
 
       const imgPath = await uploadImg(imgUri);
-
       const location = await Location.getCurrentPositionAsync({});
       const coords = {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       };
 
-      await createNewPost(imgPath, imgData, coords, currentUser);
+      const newPost = await createNewPost(imgPath, imgData, coords, currentUser);
+      // dispatch(addPublication(newPost));
+      dispatch(updateFlag(1));
+      Alert.alert("Post uploaded");
     } catch (error) {
       console.log(error.message);
     }

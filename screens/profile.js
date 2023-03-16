@@ -1,24 +1,66 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { authSlice } from "../redux/auth/authSlice";
 import { signOut } from "../redux/auth/authOperations";
 import { getUser } from "../redux/auth/authSelectors";
 
 import { Feather } from "@expo/vector-icons";
-import { StyleSheet, Text, View, ImageBackground, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ImageBackground,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import { Avatar } from "../components/Avatar";
 import PublicationList from "../components/PublicationList";
+import { deleteAvatar, updateAvatar } from "../firebase/operations";
+
 import { Variables } from "../variables";
-
-const context = "profile";
 const colors = Variables.COLORS;
+const context = "profile";
 
-const Profile = ({ navigation }) => {
+const Profile = ({ navigation, route }) => {
   const currentUser = useSelector(getUser);
-
   const dispatch = useDispatch();
+
+  const avatarUrl = route.params.uri;
+  useEffect(() => {
+    if (!avatarUrl || currentUser.avatarURL === avatarUrl) return;
+
+    (async () => {
+      const avatarNewUrl = await updateAvatar(avatarUrl);
+      dispatch(authSlice.actions.updateAvatar({ avatarURL: avatarNewUrl }));
+    })();
+  }, [avatarUrl]);
+
   const onLogOutClick = () => {
     dispatch(signOut());
     navigation.navigate("Login");
+  };
+
+  const onAvatarBtnPress = async () => {
+    if (currentUser.avatarURL) {
+      Alert.alert("Are you shure?", "Do you want to remove your Avatar?", [
+        {
+          text: "Yes",
+          onPress: async () => {
+            try {
+              await deleteAvatar(currentUser.avatarURL);
+              dispatch(authSlice.actions.updateAvatar({ avatarURL: "" }));
+
+              Alert.alert("Avatar deleted");
+            } catch (error) {
+              console.log(error.message);
+            }
+          },
+        },
+        { text: "No" },
+      ]);
+    } else {
+      navigation.navigate("Camera", { context });
+    }
   };
 
   return (
@@ -39,6 +81,7 @@ const Profile = ({ navigation }) => {
             alignSelf: "center",
           }}
           avatarUri={currentUser.avatarURL}
+          onBtnPress={onAvatarBtnPress}
         />
 
         <Text style={styles.title}>{currentUser.userName}</Text>

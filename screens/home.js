@@ -1,7 +1,10 @@
-import React, { useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { signOut } from "../redux/auth/authOperations";
 import { getUser } from "../redux/auth/authSelectors";
+
+import { getPosts } from "../firebase/operations";
+import { setPublications } from "../redux/publications/publicationsSlice";
 
 import { View, StyleSheet, Image, Text } from "react-native";
 import { Feather } from "@expo/vector-icons";
@@ -22,6 +25,17 @@ const Home = ({ navigation, route }) => {
   const currentUser = useSelector(getUser);
 
   const dispatch = useDispatch();
+  useEffect(() => {
+    (async () => {
+      try {
+        const posts = await getPosts(context, currentUser);
+        dispatch(setPublications(posts));
+      } catch (error) {
+        console.log(error.message);
+      }
+    })();
+  }, []);
+
   const onLogOutClick = () => {
     dispatch(signOut());
     navigation.navigate("Login");

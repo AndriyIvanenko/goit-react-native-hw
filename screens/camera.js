@@ -101,8 +101,10 @@ const CameraScreen = ({ navigation, route }) => {
     const { context } = route.params;
     if (context === "newPost") {
       navigation.navigate("AddNewPost", { uri: picture.uri, id: picture.id });
-    } else {
+    } else if (context === "Registration") {
       navigation.navigate("Registration", { uri: picture.uri, id: picture.id });
+    } else {
+      navigation.navigate("Profile", { uri: picture.uri, id: picture.id });
     }
   };
 

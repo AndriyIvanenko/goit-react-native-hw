@@ -1,157 +1,101 @@
-import React, { useEffect, useState } from "react";
-import { View, FlatList, StyleSheet, Image, Text, TouchableOpacity } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import React, { useCallback, useEffect, useState } from "react";
+import { FlatList, Alert } from "react-native";
+import Publication from "./Publication";
 
 import { Variables } from "../variables";
 const colors = Variables.COLORS;
 
-import { firestore } from "../firebase/config";
-import { useSelector } from "react-redux";
+import { deletePost, getPosts } from "../firebase/operations";
+import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "../redux/auth/authSelectors";
+import { getUpdateFlag } from "../redux/upd/updSelectors";
+import { updateFlag } from "../redux/upd/updSlise";
+import { deletePublication } from "../redux/publications/publicationsSlice";
+import { getPublications } from "../redux/publications/publicationsSelectors";
 
 const PublicationList = ({ navigation, context }) => {
   const [posts, setPosts] = useState([]);
-
+  const [listUpdCounter, setListUpdCounter] = useState(0);
   const currentUser = useSelector(getUser);
+  const updFlag = useSelector(getUpdateFlag);
+  // const publications = useSelector(getPublications);
 
-  const getPosts = async () => {
-    const updatedPosts = [];
-    try {
-      if (context === "profile") {
-        const data = await firestore
-          .collection("posts")
-          .where("owner", "==", currentUser.userId)
-          .get();
-        data.docs.map((doc) => {
-          updatedPosts.push({ id: doc.id, ...doc.data() });
-        });
-      } else {
-        const data = await firestore.collection("posts").get();
-        data.docs.map((doc) => {
-          updatedPosts.push({ id: doc.id, ...doc.data() });
-        });
-      }
-      setPosts(updatedPosts);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
+  const dispatch = useDispatch();
   useEffect(() => {
-    getPosts();
-  });
+    if (listUpdCounter < updFlag) {
+      (async () => {
+        try {
+          const postsList = await getPosts(context, currentUser);
+          setPosts(postsList);
+          setListUpdCounter(listUpdCounter + 1);
+          console.log("effect - ", context);
+        } catch (error) {
+          console.log(error.message);
+        }
+      })();
+    }
+  }, [listUpdCounter, updFlag]);
 
-  const addInfoTextColor = context === "profile" ? colors.main : colors.second;
-  const iconColor = context === "profile" ? colors.accent : colors.second;
-
-  const onCommentPress = (id) => {
+  const onCommentsPress = useCallback((id) => {
     navigation.navigate("Comments", { id });
-  };
+  }, []);
 
-  const openMapView = (coords, name, description) =>
+  const onLocationPress = useCallback((coords, name, description) => {
     navigation.navigate("MapView", { coords, name, description });
+  }, []);
+
+  const onDeletePress = useCallback((id, url) => {
+    Alert.alert("Are you shure?", "Do you want to remove the post?", [
+      {
+        text: "Yes",
+        onPress: async () => {
+          try {
+            await deletePost(id, url);
+            // const index = publications.findIndex((item) => item.id === id);
+            // dispatch(deletePublication(index));
+            dispatch(updateFlag(1));
+
+            Alert.alert("Post deleted");
+          } catch (error) {
+            console.log(error.message);
+          }
+        },
+      },
+      { text: "No" },
+    ]);
+  }, []);
+
+  console.log("render - ", context);
 
   return (
     <FlatList
       style={{ height: "65%" }}
+      // data={publications}
       data={posts}
-      renderItem={({ item }) => (
-        <View style={{ marginBottom: 32 }}>
-          <Image source={{ uri: item.imgUri }} style={styles.image} />
-          <Text style={styles.description}>{item.description}</Text>
-          <View style={styles.addInfo}>
-            <TouchableOpacity
-              style={styles.quantity}
-              onPress={() => onCommentPress(item.id)}
-            >
-              <Feather
-                name="message-circle"
-                size={18}
-                color={iconColor}
-                style={{ transform: [{ scaleX: -1 }] }}
-              />
-
-              <Text
-                style={{
-                  fontSize: 16,
-                  // color: addInfoTextColor,
-                  marginLeft: 8,
-                  marginRight: 27,
-                }}
-              >
-                {item.comments.length}
-              </Text>
-            </TouchableOpacity>
-
-            {context === "profile" && (
-              <View style={styles.quantity}>
-                <Feather name="thumbs-up" size={18} color={colors.accent} />
-                <Text
-                  style={{
-                    fontSize: 16,
-                    color: addInfoTextColor,
-                    marginLeft: 8,
-                  }}
-                >
-                  {item.likes}
-                </Text>
-              </View>
-            )}
-
-            <View style={styles.location}>
-              <Feather name="map-pin" size={18} color={iconColor} />
-              <TouchableOpacity
-                onPress={() =>
-                  openMapView(
-                    item.location.coords,
-                    item.location.locationName,
-                    item.description
-                  )
-                }
-              >
-                <Text style={styles.locationText}>{item.location.locationName}</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      )}
+      renderItem={({ item }) =>
+        context === "profile" ? (
+          item.owner === currentUser.userId && (
+            <Publication
+              context={context}
+              item={item}
+              deleteItem={onDeletePress}
+              goToComments={onCommentsPress}
+              goToMap={onLocationPress}
+            />
+          )
+        ) : (
+          <Publication
+            context={context}
+            item={item}
+            deleteItem={onDeletePress}
+            goToComments={onCommentsPress}
+            goToMap={onLocationPress}
+          />
+        )
+      }
       keyExtractor={(item) => item.id}
     />
   );
 };
-
-const styles = StyleSheet.create({
-  image: {
-    height: 240,
-    borderRadius: 8,
-    marginBottom: 8,
-  },
-  description: {
-    marginBottom: 11,
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  addInfo: {
-    display: "flex",
-    flexDirection: "row",
-  },
-  quantity: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  location: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    marginLeft: "auto",
-  },
-  locationText: {
-    fontSize: 16,
-    textDecorationLine: "underline",
-    paddingRight: 8,
-    marginLeft: 8,
-  },
-});
 
 export default PublicationList;

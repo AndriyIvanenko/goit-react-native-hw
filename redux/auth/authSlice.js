@@ -21,6 +21,10 @@ export const authSlice = createSlice({
       ...state,
       isLoggedIn: payload.isLoggedIn,
     }),
+    updateAvatar: (state, { payload }) => ({
+      ...state,
+      avatarURL: payload.avatarURL,
+    }),
   },
 });
 

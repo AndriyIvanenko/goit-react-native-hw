@@ -1,18 +1,18 @@
 import { auth } from "../../firebase/config";
-import { uploadImg } from "../../helpers/helpers";
+import { uploadImg } from "../../firebase/operations";
 import { authSlice } from "./authSlice";
 
-const signUp = (credentials, avatarUri) => async (dispatch, getState) => {
+const signUp = (credentials) => async (dispatch, getState) => {
   console.log("signUp");
-  const { email, password, name } = credentials;
+  const { email, password, name, avatarURL } = credentials;
   try {
     const response = await auth.createUserWithEmailAndPassword(email, password);
-    const avatar = await uploadImg(avatarUri);
+    const avatar = await uploadImg(avatarURL);
     await auth.currentUser.updateProfile({ displayName: name, photoURL: avatar });
     const { uid } = response.user;
     dispatch(
       authSlice.actions.updateUser({
-        avatarURL: avatarUri,
+        avatarURL: avatarURL,
         userId: uid,
         userName: name,
         userEmail: email,
