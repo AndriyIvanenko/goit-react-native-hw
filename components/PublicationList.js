@@ -2,9 +2,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { FlatList, Alert } from "react-native";
 import Publication from "./Publication";
 
-import { Variables } from "../variables";
-const colors = Variables.COLORS;
-
 import { deletePost, getPosts } from "../firebase/operations";
 import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "../redux/auth/authSelectors";
@@ -16,9 +13,10 @@ import { getPublications } from "../redux/publications/publicationsSelectors";
 const PublicationList = ({ navigation, context }) => {
   const [posts, setPosts] = useState([]);
   const [listUpdCounter, setListUpdCounter] = useState(0);
-  const currentUser = useSelector(getUser);
   const updFlag = useSelector(getUpdateFlag);
   // const publications = useSelector(getPublications);
+
+  const currentUser = useSelector(getUser);
 
   const dispatch = useDispatch();
   useEffect(() => {
