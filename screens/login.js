@@ -17,22 +17,31 @@ import { isUserLoggedIn } from "../redux/auth/authSelectors";
 
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
+import { PasswordInput } from "../components/PasswordInput";
 
 import { Variables } from "../variables";
-
 const colors = Variables.COLORS;
 
 const Login = ({ navigation }) => {
   const initCredentials = { email: "", password: "" };
   const [credentials, setCredentials] = useState(initCredentials);
+  const [isEmailinValid, setIsEmailInvalid] = useState(false);
 
   const isLoggedIn = useSelector(isUserLoggedIn);
   useEffect(() => {
     if (isLoggedIn) navigation.navigate("HomePage");
   }, [isLoggedIn]);
 
-  const getEmail = (value) =>
+  const getEmail = (value) => {
+    let re = /\S+@\S+\.\S+/;
+    let regex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+
     setCredentials((prevState) => ({ ...prevState, email: value }));
+
+    re.test(value) || regex.test(value)
+      ? setIsEmailInvalid(false)
+      : setIsEmailInvalid(true);
+  };
 
   const getPassword = (value) =>
     setCredentials((prevState) => ({ ...prevState, password: value }));
@@ -61,15 +70,22 @@ const Login = ({ navigation }) => {
             behavior={Platform.OS == "ios" ? "padding" : "height"}
             style={{ marginBottom: 16 }}
           >
-            <Input
-              placeholder="E-mail"
-              value={credentials.email}
-              onChangeText={getEmail}
-              position={{
-                marginBottom: 16,
-              }}
-            />
-            <Input
+            <View>
+              <Input
+                placeholder="E-mail"
+                value={credentials.email}
+                onChangeText={getEmail}
+                position={{
+                  marginBottom: 16,
+                }}
+              />
+              {isEmailinValid ? (
+                <Text style={styles.validation}>E-mail is not valid</Text>
+              ) : (
+                <Text style={styles.validation}></Text>
+              )}
+            </View>
+            <PasswordInput
               placeholder="Password"
               value={credentials.password}
               onChangeText={getPassword}
@@ -77,6 +93,7 @@ const Login = ({ navigation }) => {
                 marginBottom: 43,
               }}
             />
+
             <Button name="Login" onPress={onLoginClick} onFocus={isCredantialsReady} />
           </KeyboardAvoidingView>
 
@@ -130,6 +147,13 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     justifyContent: "flex-end",
+  },
+  validation: {
+    position: "absolute",
+    left: 16,
+    bottom: 18,
+    fontStyle: "italic",
+    color: "red",
   },
 });
 

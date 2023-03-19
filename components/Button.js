@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity, Text } from "react-native";
-import { Variables } from "../variables";
 
+import { Variables } from "../variables";
 const colors = Variables.COLORS;
 
 export const Button = ({ name, onPress, onFocus }) => {
