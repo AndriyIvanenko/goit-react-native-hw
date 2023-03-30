@@ -1,12 +1,13 @@
-// import * as firebase from "firebase";
-import * as firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/storage";
-import "firebase/firestore";
+// import * as firebase from "firebase/app";
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getStorage } from "firebase/storage";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAo1DbN9bwriSuOPIQnHCQIW75fIjPQx1M",
   authDomain: "react-native-project-c4e1b.firebaseapp.com",
+  databaseURL: "https://react-native-project-c4e1b.firebaseio.com",
   projectId: "react-native-project-c4e1b",
   storageBucket: "react-native-project-c4e1b.appspot.com",
   messagingSenderId: "400174660446",
@@ -14,9 +15,12 @@ const firebaseConfig = {
   measurementId: "G-PB5YXCMSLT",
 };
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const storage = firebase.storage();
-const firestore = firebase.firestore();
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const storage = getStorage(app);
+const firestore = getFirestore(app);
+// const auth = firebase.auth();
+// const storage = firebase.storage();
+// const firestore = firebase.firestore();
 
 export { auth, storage, firestore };

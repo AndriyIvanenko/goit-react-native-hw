@@ -1,6 +1,6 @@
 import React, { useEffect, useLayoutEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { signOut } from "../redux/auth/authOperations";
+import { signOff } from "../redux/auth/authOperations";
 import { getUser } from "../redux/auth/authSelectors";
 
 import { getPosts } from "../firebase/operations";
@@ -37,7 +37,7 @@ const Home = ({ navigation, route }) => {
   }, []);
 
   const onLogOutClick = () => {
-    dispatch(signOut());
+    dispatch(signOff());
     navigation.navigate("Login");
   };
 

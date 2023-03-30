@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { authSlice } from "../redux/auth/authSlice";
-import { signOut } from "../redux/auth/authOperations";
+import { signOff } from "../redux/auth/authOperations";
 import { getUser } from "../redux/auth/authSelectors";
 
 import { Feather } from "@expo/vector-icons";
@@ -36,7 +36,7 @@ const Profile = ({ navigation, route }) => {
   }, [avatarUrl]);
 
   const onLogOutClick = () => {
-    dispatch(signOut());
+    dispatch(signOff());
     navigation.navigate("Login");
   };
 

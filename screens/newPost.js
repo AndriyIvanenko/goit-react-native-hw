@@ -26,6 +26,7 @@ import { createNewPost } from "../firebase/operations";
 import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { Button } from "../components/Button";
+import { Loader } from "../components/Loader";
 
 import { Variables } from "../variables";
 const colors = Variables.COLORS;
@@ -39,6 +40,7 @@ const AddNewPost = ({ navigation, route }) => {
     location: "",
   };
   const [imgData, setImgData] = useState(initialImgData);
+  const [isDbOperationActive, setIsDbOperationActive] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -56,6 +58,8 @@ const AddNewPost = ({ navigation, route }) => {
 
   const publishNewPost = async () => {
     try {
+      setIsDbOperationActive(true);
+
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         Alert.alert("Permission to access location was denied");
@@ -69,11 +73,14 @@ const AddNewPost = ({ navigation, route }) => {
       };
 
       const newPost = await createNewPost(imgPath, imgData, coords, currentUser);
-      // dispatch(addPublication(newPost));
-      dispatch(updateFlag(1));
+      dispatch(addPublication(newPost));
+      // dispatch(updateFlag(1));
+
+      setIsDbOperationActive(false);
       Alert.alert("Post uploaded");
     } catch (error) {
       console.log(error.message);
+      Alert.alert(error.message);
     }
     navigation.navigate("Home");
   };
@@ -101,6 +108,7 @@ const AddNewPost = ({ navigation, route }) => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
+        {isDbOperationActive && <Loader />}
         <View style={styles.imgContainer}>
           <TouchableOpacity
             style={{
@@ -153,7 +161,12 @@ const AddNewPost = ({ navigation, route }) => {
           </View>
         </KeyboardAvoidingView>
 
-        <Button name="Publish" onFocus={isImgDataReady} onPress={publishNewPost} />
+        <Button
+          name="Publish"
+          onFocus={isImgDataReady}
+          onPress={publishNewPost}
+          style={{ marginBottom: 32 }}
+        />
 
         <TouchableOpacity
           onPress={removeImg}
@@ -226,7 +239,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 20,
-    marginTop: 150,
+    marginTop: 100,
+    // marginTop: "auto",
     alignSelf: "center",
   },
 });

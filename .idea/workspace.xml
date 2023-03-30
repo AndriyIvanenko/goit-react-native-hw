@@ -5,11 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fa51cc90-5dd6-4950-b64c-2ae8579a460d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/redux/authMethods.js" beforeDir="false" afterPath="$PROJECT_DIR$/redux/authMethods.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/redux/authReducer.js" beforeDir="false" afterPath="$PROJECT_DIR$/redux/authReducer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/redux/store.js" beforeDir="false" afterPath="$PROJECT_DIR$/redux/store.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Input.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Input.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/screens/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/screens/login.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/screens/registration.js" beforeDir="false" afterPath="$PROJECT_DIR$/screens/registration.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

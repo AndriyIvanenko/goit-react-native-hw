@@ -18,6 +18,8 @@ import { Variables } from "../variables";
 const colors = Variables.COLORS;
 
 import { firestore } from "../firebase/config";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { getPost, updatePost } from "../firebase/operations";
 import { useSelector } from "react-redux";
 import { getUser } from "../redux/auth/authSelectors";
 import { createNewDate } from "../firebase/operations";
@@ -32,15 +34,18 @@ const Comments = ({ navigation, route }) => {
 
   const getPost = async () => {
     try {
-      const snapshot = await firestore.collection("posts").doc(postId).get();
+      const snapshot = await getDoc(doc(firestore, "posts", postId));
+      // const snapshot = await firestore.collection("posts").doc(postId).get();
       const post = snapshot.data();
       setPost(post);
     } catch (error) {
       console.log(error.message);
+      Alert.alert(error.message);
     }
   };
 
   useEffect(() => {
+    // setPost(getPost());
     getPost();
   }, []);
 
@@ -58,17 +63,21 @@ const Comments = ({ navigation, route }) => {
         comment: newComment,
       };
 
+      // Alert.alert("aaa");
       const updatedComments = [...post.comments, comment];
+
       setPost((prevState) => ({ ...prevState, comments: updatedComments }));
 
+      // updatePost(postId);
       try {
-        const ref = await firestore.collection("posts").doc(postId);
-        console.log(updatedComments);
-        ref.update({
-          comments: updatedComments,
-        });
+        await updateDoc(doc(firestore, "posts", postId), { comments: updatedComments });
+        // const ref = await firestore.collection("posts").doc(postId);
+        // ref.update({
+        //   comments: updatedComments,
+        // });
       } catch (error) {
         console.log(error.message);
+        Alert.alert(error.message);
       }
 
       Alert.alert("new comment sent");

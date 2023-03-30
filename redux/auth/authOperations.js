@@ -1,14 +1,22 @@
+import { Alert } from "react-native";
 import { auth } from "../../firebase/config";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+} from "firebase/auth";
 import { uploadImg } from "../../firebase/operations";
 import { authSlice } from "./authSlice";
 
 const signUp = (credentials) => async (dispatch, getState) => {
-  console.log("signUp");
+  // console.log("signUp");
   const { email, password, name, avatarURL } = credentials;
   try {
-    const response = await auth.createUserWithEmailAndPassword(email, password);
+    const response = await createUserWithEmailAndPassword(auth, email, password);
     const avatar = await uploadImg(avatarURL);
-    await auth.currentUser.updateProfile({ displayName: name, photoURL: avatar });
+    await updateProfile(auth.currentUser, { displayName: name, photoURL: avatar });
     const { uid } = response.user;
     dispatch(
       authSlice.actions.updateUser({
@@ -20,14 +28,15 @@ const signUp = (credentials) => async (dispatch, getState) => {
     );
   } catch (error) {
     console.log(error.message);
+    Alert.alert(error.message);
   }
 };
 
 const signIn = (credentials) => async (dispatch, getState) => {
-  console.log("signIn");
+  // console.log("signIn");
   const { email, password } = credentials;
   try {
-    const response = await auth.signInWithEmailAndPassword(email, password);
+    const response = await signInWithEmailAndPassword(auth, email, password);
     const { uid, displayName, photoURL } = response.user;
     dispatch(
       authSlice.actions.updateUser({
@@ -39,12 +48,13 @@ const signIn = (credentials) => async (dispatch, getState) => {
     );
   } catch (error) {
     console.log(error.message);
+    Alert.alert(error.message);
   }
 };
 
-const signOut = () => (dispatch, getState) => {
-  console.log("signOut");
-  auth.signOut();
+const signOff = () => (dispatch, getState) => {
+  // console.log("signOut");
+  signOut(auth);
   dispatch(
     authSlice.actions.updateUser({
       avatarURL: "",
@@ -57,8 +67,8 @@ const signOut = () => (dispatch, getState) => {
 };
 
 const getAuthState = () => async (dispatch, getState) => {
-  console.log("getAuthState");
-  await auth.onAuthStateChanged((user) => {
+  // console.log("getAuthState");
+  onAuthStateChanged(auth, (user) => {
     if (user) {
       const { uid, displayName, email, photoURL } = user;
       dispatch(
@@ -74,4 +84,4 @@ const getAuthState = () => async (dispatch, getState) => {
   });
 };
 
-export { signUp, signIn, signOut, getAuthState };
+export { signUp, signIn, signOff, getAuthState };

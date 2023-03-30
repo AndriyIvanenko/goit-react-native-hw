@@ -16,7 +16,9 @@ import { signUp } from "../redux/auth/authOperations";
 import { isUserLoggedIn } from "../redux/auth/authSelectors";
 
 import { Input } from "../components/Input";
+import { EmailInput } from "../components/EmailInput";
 import { PasswordInput } from "../components/PasswordInput";
+
 import { Button } from "../components/Button";
 import { Avatar } from "../components/Avatar";
 
@@ -27,7 +29,6 @@ const context = "Registration";
 const Registration = ({ navigation, route }) => {
   const initCredentials = { email: "", password: "", name: "", avatarURL: "" };
   const [credentials, setCredentials] = useState(initCredentials);
-  const [isEmailinValid, setIsEmailInvalid] = useState(false);
 
   const isLoggedIn = useSelector(isUserLoggedIn);
   useEffect(() => {
@@ -43,14 +44,7 @@ const Registration = ({ navigation, route }) => {
     setCredentials((prevState) => ({ ...prevState, name: value }));
 
   const getEmail = (value) => {
-    let re = /\S+@\S+\.\S+/;
-    let regex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
-
     setCredentials((prevState) => ({ ...prevState, email: value }));
-
-    re.test(value) || regex.test(value)
-      ? setIsEmailInvalid(false)
-      : setIsEmailInvalid(true);
   };
 
   const getPassword = (value) =>
@@ -106,21 +100,16 @@ const Registration = ({ navigation, route }) => {
                 marginBottom: 16,
               }}
             />
-            <View>
-              <Input
-                placeholder="E-mail"
-                value={credentials.email}
-                onChangeText={getEmail}
-                position={{
-                  marginBottom: 16,
-                }}
-              />
-              {isEmailinValid ? (
-                <Text style={styles.validation}>E-mail is not valid</Text>
-              ) : (
-                <Text style={styles.validation}></Text>
-              )}
-            </View>
+
+            <EmailInput
+              placeholder="E-mail"
+              value={credentials.email}
+              onChangeText={getEmail}
+              position={{
+                marginBottom: 16,
+              }}
+            />
+
             <PasswordInput
               placeholder="Password"
               value={credentials.password}
